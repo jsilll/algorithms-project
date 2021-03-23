@@ -26,27 +26,27 @@ caem e l corresponde ao tamanho da maior sequência de dominós a cair.
 # Exemplo
 
 ## Input
-7
-3
-3
-4
-4
-6
-6
-5
-2
-8
-4
-2
-6
-5
-2
-5
-7
-7
+`7`
+`3`
+`3`
+`4`
+`4`
+`6`
+`6`
+`5`
+`2`
+`8`
+`4`
+`2`
+`6`
+`5`
+`2`
+`5`
+`7`
+`7`
 
 # Output
-2 5
+`2 5`
 
 # Implementação
 A implementação do projecto deverá ser feita preferencialmente usando as linguagens de pro-
@@ -59,12 +59,11 @@ algoritmo iterativo.
 O tempo necessário para implementar este projecto é inferior a 15 horas.
 
 ## Parâmetros de compilação:
-C++: g++ -std=c++11 -O3 -Wall file.cpp -lm
-C: gcc -O3 -ansi -Wall file.c -lm
-Javac: javac File.java
-2
-Java: java -Xss32m -Xmx256m -classpath . File
-Python: python3 file.py
+C++: `g++ -std=c++11 -O3 -Wall file.cpp -lm`
+C: `gcc -O3 -ansi -Wall file.c -lm`
+Javac: `javac File.java`
+Java: `java -Xss32m -Xmx256m -classpath . File`
+Python: `python3 file.py`
 
 # Submissão do Projecto
 A submissão do projecto deverá incluir um relatório resumido e um ficheiro com o código
