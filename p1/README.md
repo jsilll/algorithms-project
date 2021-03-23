@@ -80,8 +80,7 @@ análise teórica e a avaliação experimental dos resultados. O relatório deve
 ferência que tenha sido utilizada na realização do projecto. Relatórios que não sejam entregues
 em formato PDF terão nota 0. Atempadamente será divulgado um template do relatório.
 Código fonte: deve ser submetido através do sistema Mooshak e o relatório (em formato PDF)
-deverá ser submetido através do Fénix. O código fonte será avaliado automaticamente pelo sis-
-tema Mooshak (http://acp.tecnico.ulisboa.pt/~mooshak/). Os alunos são en-
+deverá ser submetido através do Fénix. O código fonte será avaliado automaticamente pelo sistema [Mooshak](http://acp.tecnico.ulisboa.pt/~mooshak/). Os alunos são en-
 corajados a submeter, tão cedo quanto possível, soluções preliminares para o sistema Mooshak
 e para o Fénix. Note que apenas a última submissão será considerada para efeitos de avaliação.
 Todas as submissões anteriores serão ignoradas: tal inclui o código fonte e o relatório.
