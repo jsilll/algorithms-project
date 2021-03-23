@@ -26,24 +26,24 @@ caem e l corresponde ao tamanho da maior sequência de dominós a cair.
 # Exemplo
 
 ## Input
-`7`
-`3`
-`3`
-`4`
-`4`
-`6`
-`6`
-`5`
-`2`
-`8`
-`4`
-`2`
-`6`
-`5`
-`2`
-`5`
-`7`
-`7`
+`7`<br/><br/>
+`3`<br/><br/>
+`3`<br/><br/>
+`4`<br/><br/>
+`4`<br/><br/>
+`6`<br/><br/>
+`6`<br/><br/>
+`5`<br/><br/>
+`2`<br/><br/>
+`8`<br/><br/>
+`4`<br/><br/>
+`2`<br/><br/>
+`6`<br/><br/>
+`5`<br/><br/>
+`2`<br/><br/>
+`5`<br/><br/>
+`7`<br/><br/>
+`7`<br/><br/>
 
 # Output
 `2 5`
@@ -59,10 +59,10 @@ algoritmo iterativo.
 O tempo necessário para implementar este projecto é inferior a 15 horas.
 
 ## Parâmetros de compilação:
-C++: `g++ -std=c++11 -O3 -Wall file.cpp -lm`
-C: `gcc -O3 -ansi -Wall file.c -lm`
-Javac: `javac File.java`
-Java: `java -Xss32m -Xmx256m -classpath . File`
+C++: `g++ -std=c++11 -O3 -Wall file.cpp -lm`<br/><br/>
+C: `gcc -O3 -ansi -Wall file.c -lm`<br/><br/>
+Javac: `javac File.java`<br/><br/>
+Java: `java -Xss32m -Xmx256m -classpath . File`<br/><br/>
 Python: `python3 file.py`
 
 # Submissão do Projecto
