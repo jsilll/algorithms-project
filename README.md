@@ -1,1 +1,1 @@
-# asa-project
+# Projeto de Análise e Síntese de Algoritmos
