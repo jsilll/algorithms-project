@@ -27,26 +27,18 @@ caem e `l` corresponde ao tamanho da maior sequência de dominós a cair.
 # Exemplo
 
 ## Input
-`7`<br/><br/>
-`3`<br/><br/>
-`3`<br/><br/>
-`4`<br/><br/>
-`4`<br/><br/>
-`6`<br/><br/>
-`6`<br/><br/>
-`5`<br/><br/>
-`2`<br/><br/>
-`8`<br/><br/>
-`4`<br/><br/>
-`2`<br/><br/>
-`6`<br/><br/>
-`5`<br/><br/>
-`2`<br/><br/>
-`5`<br/><br/>
-`7`<br/><br/>
-`7`<br/><br/>
+`7 8`<br/><br/>
+`3 4`<br/><br/>
+`3 2`<br/><br/>
+`4 6`<br/><br/>
+`4 5`<br/><br/>
+`6 2`<br/><br/>
+`6 5`<br/><br/>
+`6 7`<br/><br/>
+`5 7`<br/><br/>
+`2 7`<br/><br/>
 
-# Output
+ # Output
 `2 5`
 
 # Implementação
