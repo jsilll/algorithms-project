@@ -112,3 +112,7 @@ de acordo com as regras aprovadas pela Universidade e publicadas em “Diário d
 
 # Links
 https://www.geeksforgeeks.org/find-longest-path-directed-acyclic-graph/
+https://www.geeksforgeeks.org/connected-components-in-an-undirected-graph/
+https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
+https://www.geeksforgeeks.org/maximum-number-of-edges-among-all-connected-components-of-an-undirected-graph/?ref=rp
+https://www.geeksforgeeks.org/strongly-connected-components/
