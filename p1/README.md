@@ -34,7 +34,6 @@ caem e `l` corresponde ao tamanho da maior sequência de dominós a cair.
 `4 5`<br/><br/>
 `6 2`<br/><br/>
 `6 5`<br/><br/>
-`6 7`<br/><br/>
 `5 7`<br/><br/>
 `2 7`<br/><br/>
 
@@ -110,3 +109,6 @@ grupo implica a reprovação na unidade curricular, para todos os alunos envolvi
 os alunos que disponibilizaram o código). Qualquer tentativa de fraude, directa or indirecta,
 será comunicada ao Conselho Pedagógico do IST, ao coordenador de curso, e será penalizada
 de acordo com as regras aprovadas pela Universidade e publicadas em “Diário da República”.
+
+# Links
+https://www.geeksforgeeks.org/find-longest-path-directed-acyclic-graph/
