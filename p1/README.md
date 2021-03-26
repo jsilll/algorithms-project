@@ -120,3 +120,5 @@ https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
 https://www.geeksforgeeks.org/maximum-number-of-edges-among-all-connected-components-of-an-undirected-graph/?ref=rp
 
 https://www.geeksforgeeks.org/strongly-connected-components/
+
+https://www.geeksforgeeks.org/topological-sorting-indegree-based-solution/
