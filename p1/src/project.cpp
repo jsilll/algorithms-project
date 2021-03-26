@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <list>
+// #include <queue>
 // #include <limits.h>
-// #include <list>
 // #include <stack>
 
 using namespace std;
@@ -16,10 +17,12 @@ public:
     Graph(int V);
     ~Graph();
     void addEdge(int u, int v);
-    vector<int> derrubarPontas();
-    Graph getTranspose();
     void printGraph();
+    Graph getTranspose();
+    vector<int> getSinks();
     vector<int> getSources();
+    int BFS(int s);
+    int getMaxChain();
 };
 
 Graph::Graph(int V)
@@ -38,19 +41,6 @@ void Graph::addEdge(int v, int w)
     adj[v].push_back(w); // Add w to v’s list.
 }
 
-Graph Graph::getTranspose()
-{
-    Graph g(V);
-    for (int v = 0; v < this->V; v++)
-    {
-        for (vector<int>::iterator i = this->adj[v].begin(); i != this->adj[v].end(); ++i)
-        {
-            g.adj[*i].push_back(v);
-        }
-    }
-    return g;
-}
-
 void Graph::printGraph()
 {
     for (int v = 0; v < this->V; v++)
@@ -64,7 +54,20 @@ void Graph::printGraph()
     }
 }
 
-vector<int> Graph::getSources()
+Graph Graph::getTranspose()
+{
+    Graph g(V);
+    for (int v = 0; v < this->V; v++)
+    {
+        for (vector<int>::iterator i = this->adj[v].begin(); i != this->adj[v].end(); ++i)
+        {
+            g.adj[*i].push_back(v);
+        }
+    }
+    return g;
+}
+
+vector<int> Graph::getSinks()
 {
     vector<int> res;
     for (int v = 0; v < this->V; v++)
@@ -77,39 +80,70 @@ vector<int> Graph::getSources()
     return res;
 }
 
-int main(int argc, char const *argv[])
+vector<int> Graph::getSources()
 {
-    // Ler Cenas de input e decrementar os numeros de cada vertice
+    Graph gt = this->getTranspose(); // O(V + E)
+    return gt.getSinks();
+}
 
-    // int k; // numero minimo de intervencoes necessarias para que todos os dominos caiam
-    // int l; // tamanho da maior sequencia de dominos a cair
+int Graph::BFS(int s)
+{
+    int visited_count = 0;
+    bool *visited = new bool[V];
+    for (int i = 0; i < V; i++)
+        visited[i] = false;
 
-    Graph g(7);
-    g.addEdge(2, 1);
-    g.addEdge(2, 3);
-    g.addEdge(3, 4);
-    g.addEdge(3, 5);
-    g.addEdge(5, 4);
-    g.addEdge(5, 1);
-    g.addEdge(4, 6);
-    g.addEdge(1, 6);
+    list<int> queue;
 
-    Graph gt = g.getTranspose(); // O(V + E)
+    visited[s] = true;
+    visited_count++;
 
-    g.printGraph();
-    std::cout << "\n";
-    gt.printGraph();
+    queue.push_back(s);
 
-    std::cout << "\n";
-    for (auto v : gt.getSources()) // O(V)
+    while (!queue.empty())
     {
-        std::cout << v << "\n";
+        s = queue.front();
+        queue.pop_front();
+
+        for (vector<int>::iterator i = this->adj[s].begin(); i != this->adj[s].end(); ++i)
+        {
+            if (!visited[*i])
+            {
+                visited[*i] = true;
+                visited_count++;
+                queue.push_back(*i);
+            }
+        }
     }
 
-    // Para cada source fazer BFS?? E quantos dominos e que se conseguem derrubar em cada caso (guardar o valor maximo de dominos que se derrubariam de entre todas as sources)
-    // Mais BFS
+    return visited_count;
+}
 
-    // Fazer o output pedido mas agora incrementando o numero de cada vertice
+int Graph::getMaxChain()
+{
+    vector<int> sources = this->getSources();
+    int l = 0;
+    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
+    {
+        int chain_size = this->BFS(*i);
+        if (chain_size > l)
+            l = chain_size;
+    }
+    return l - 1;
+}
 
+int main(int argc, char const *argv[])
+{
+    int n, m;
+    scanf("%d %d", &n, &m);
+    Graph g(n);
+    for (int i = 0; i < m; i++)
+    {
+        int u, v;
+        scanf("%d %d", &u, &v);
+        g.addEdge(u - 1, v - 1);
+    }
+
+    std::cout << g.getSources().size() << " " << g.getMaxChain() << "\n";
     return 0;
 }

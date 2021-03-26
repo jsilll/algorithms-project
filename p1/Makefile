@@ -43,8 +43,7 @@ run: $(OUT)
 	./project < inputs/input.txt
 
 inputs: $(OUT)
-	# ./randomDAG N p [seed] > testfile (podem variar os parâmetros e gerar vários ficheiros de teste)
-	./randomDAG 10 1 1 > inputs/input.txt
+		./randomDAG 10 1 1 > inputs/input.txt
 
 # compile program with debugging information
 debug: $(OUT)
