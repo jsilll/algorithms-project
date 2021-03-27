@@ -1,9 +1,10 @@
 #include <iostream>
+#include <limits.h>
 #include <list>
 #include <stack>
 #include <vector>
 
-#define NINF -1
+#define NINF INT_MIN
 using namespace std;
 
 class Graph
@@ -141,7 +142,7 @@ int main()
     }
 
     int res = 0;
-    vector<int> sources = g.getSources();
+    vector<int> sources = g.getSources().size();
     for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
     {
         res = max(res, g.findLongestPath(*i)); // O ((V + E)^2)
