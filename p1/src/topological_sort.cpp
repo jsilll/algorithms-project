@@ -145,7 +145,8 @@ int main()
     vector<int> sources = g.getSources();
     for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
     {
-        res = max(res, g.findLongestPath(*i)); // O ((V + E)^2)
+        // tem de ser a partir das sources
+        res = max(res, g.findLongestPath(*i)); // O ((V + E) * S)
     }
 
     std::cout << sources.size() << " " << res + 1 << "\n";

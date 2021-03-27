@@ -88,7 +88,7 @@ void Graph::DFS(int n, int dp[], bool vis[])
     {
         if (!vis[*i])
             this->DFS(*i, dp, vis);
-        dp[n] = max(dp[n], 1 + dp[*i]);
+        dp[n] = max(dp[n], dp[*i] + 1);
     }
 }
 
@@ -106,23 +106,23 @@ int Graph::findLongestPath(int n)
         vis[i] = false;
     }
 
-    // for (int i = 0; i < n; i++)
-    // {
-    //     if (!vis[i])
-    //     {
-    //         this->DFS(i, dp, vis);
-    //     }
-    // }
-
-    // eu acho que aqui só precisamos de ir as sources
-    vector<int> sources = this->getSources();
-    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
+    for (int i = 0; i < n; i++)
     {
-        if (!vis[*i])
+        if (!vis[i])
         {
-            this->DFS(*i, dp, vis);
+            this->DFS(i, dp, vis);
         }
     }
+
+    // eu acho que aqui só precisamos de ir as sources
+    // vector<int> sources = this->getSources();
+    // for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
+    // {
+    //     if (!vis[*i])
+    //     {
+    //         this->DFS(*i, dp, vis);
+    //     }
+    // }
 
     int ans = 0;
 
