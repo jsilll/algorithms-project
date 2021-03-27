@@ -122,3 +122,5 @@ https://www.geeksforgeeks.org/maximum-number-of-edges-among-all-connected-compon
 https://www.geeksforgeeks.org/strongly-connected-components/
 
 https://www.geeksforgeeks.org/topological-sorting-indegree-based-solution/
+
+https://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/11-Graph/Docs/longest-path-in-dag.pdf

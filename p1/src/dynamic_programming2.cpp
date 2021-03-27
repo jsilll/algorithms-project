@@ -17,7 +17,7 @@ public:
     vector<int> getSinks();
     vector<int> getSources();
     void DFS(int s, int dp[], bool vis[]);
-    int findLongestPath(int n);
+    int findLongestPath(int n, vector<int> sources);
 };
 
 Graph::Graph(int V)
@@ -92,7 +92,7 @@ void Graph::DFS(int n, int dp[], bool vis[])
     }
 }
 
-int Graph::findLongestPath(int n)
+int Graph::findLongestPath(int n, vector<int> sources)
 {
     int dp[n];
     for (int i = 0; i < n; i++)
@@ -106,11 +106,11 @@ int Graph::findLongestPath(int n)
         vis[i] = false;
     }
 
-    for (int i = 0; i < n; i++)
+    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
     {
-        if (!vis[i])
+        if (!vis[*i])
         {
-            this->DFS(i, dp, vis);
+            this->DFS(*i, dp, vis);
         }
     }
 
@@ -135,6 +135,7 @@ int main(int argc, char const *argv[])
         g.addEdge(u - 1, v - 1);
     }
 
-    cout << g.getSources().size() << " " << g.findLongestPath(n) + 1 << "\n";
+    vector<int> sources = g.getSources();
+    cout << sources.size() << " " << g.findLongestPath(n, sources) + 1 << "\n";
     return 0;
 }
