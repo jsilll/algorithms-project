@@ -1,28 +1,23 @@
 #include <iostream>
-#include <list>
-#include <stack>
 #include <vector>
 
-#define NINF -1
 using namespace std;
 
 class Graph
 {
     int V;
-
     vector<int> *adj;
-    void topologicalSort(int v, bool visited[], stack<int> &Stack);
 
 public:
     Graph(int V);
     ~Graph();
-
     void addEdge(int u, int v);
+    void printGraph();
     Graph getTranspose();
     vector<int> getSinks();
     vector<int> getSources();
-
-    int findLongestPath(int s);
+    void DFS(int s, int dp[], bool vis[]);
+    int findLongestPath(int n);
 };
 
 Graph::Graph(int V)
@@ -36,9 +31,22 @@ Graph::~Graph()
     delete[] adj;
 }
 
-void Graph::addEdge(int u, int v)
+void Graph::addEdge(int v, int u)
 {
-    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
+
+void Graph::printGraph()
+{
+    for (int v = 0; v < this->V; v++)
+    {
+        cout << v << " -> ";
+        for (vector<int>::iterator i = this->adj[v].begin(); i != this->adj[v].end(); ++i)
+        {
+            cout << *i << " ";
+        }
+        cout << "\n";
+    }
 }
 
 Graph Graph::getTranspose()
@@ -69,67 +77,63 @@ vector<int> Graph::getSinks()
 
 vector<int> Graph::getSources()
 {
-    Graph gt = this->getTranspose(); // O(V + E)
+    Graph gt = this->getTranspose();
     return gt.getSinks();
 }
 
-void Graph::topologicalSort(int v, bool visited[], stack<int> &Stack) // DFS traversal and adding to the stack by closing order
+void Graph::DFS(int n, int dp[], bool vis[])
 {
-    visited[v] = true;
-
-    for (vector<int>::iterator i = adj[v].begin(); i != adj[v].end(); ++i)
+    vis[n] = true;
+    for (vector<int>::iterator i = this->adj[n].begin(); i != this->adj[n].end(); ++i)
     {
-        if (!visited[*i])
-            topologicalSort(*i, visited, Stack);
+        if (!vis[*i])
+            this->DFS(*i, dp, vis);
+        dp[n] = max(dp[n], 1 + dp[*i]);
     }
-
-    Stack.push(v);
 }
 
-int Graph::findLongestPath(int s)
+int Graph::findLongestPath(int n)
 {
-    stack<int> Stack;
-    int dist[V];
-
-    bool *visited = new bool[V];
-    for (int i = 0; i < V; i++)
-        visited[i] = false;
-
-    for (int i = 0; i < V; i++)
-        if (visited[i] == false)
-            topologicalSort(i, visited, Stack);
-
-    for (int i = 0; i < V; i++)
-        dist[i] = NINF;
-    dist[s] = 0;
-
-    while (Stack.empty() == false)
+    int dp[n];
+    for (int i = 0; i < n; i++)
     {
-        int u = Stack.top();
-        Stack.pop();
+        dp[i] = 0;
+    }
 
-        if (dist[u] != NINF)
+    bool vis[n];
+    for (int i = 0; i < n; i++)
+    {
+        vis[i] = false;
+    }
+
+    // for (int i = 0; i < n; i++)
+    // {
+    //     if (!vis[i])
+    //     {
+    //         this->DFS(i, dp, vis);
+    //     }
+    // }
+
+    // eu acho que aqui só precisamos de ir as sources
+    vector<int> sources = this->getSources();
+    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
+    {
+        if (!vis[*i])
         {
-            for (vector<int>::iterator i = adj[u].begin(); i != adj[u].end(); ++i)
-            {
-                dist[*i] = max(dist[*i], dist[u] + 1);
-            }
+            this->DFS(*i, dp, vis);
         }
     }
 
-    delete[] visited;
-
     int res = 0;
-    for (int i = 0; i < V; i++)
+    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
     {
-        res = max(res, dist[i]);
+        res = max(res, dp[*i]);
     }
     return res;
 }
 
-int main()
+int main(int argc, char const *argv[])
 {
-
     int n, m;
     scanf("%d %d", &n, &m);
     Graph g(n);
@@ -140,14 +144,6 @@ int main()
         g.addEdge(u - 1, v - 1);
     }
 
-    int res = 0;
-    vector<int> sources = g.getSources();
-    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
-    {
-        res = max(res, g.findLongestPath(*i)); // O ((V + E)^2)
-    }
-
-    std::cout << sources.size() << " " << res + 1 << "\n";
-
+    cout << g.getSources().size() << " " << g.findLongestPath(n) + 1 << "\n";
     return 0;
 }

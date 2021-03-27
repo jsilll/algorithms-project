@@ -142,7 +142,7 @@ int main()
     }
 
     int res = 0;
-    vector<int> sources = g.getSources().size();
+    vector<int> sources = g.getSources();
     for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
     {
         res = max(res, g.findLongestPath(*i)); // O ((V + E)^2)
