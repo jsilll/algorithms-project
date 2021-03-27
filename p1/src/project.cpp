@@ -1,16 +1,13 @@
 #include <iostream>
 #include <vector>
 #include <list>
-// #include <queue>
-// #include <limits.h>
-// #include <stack>
+#include <bits/stdc++.h>
 
 using namespace std;
 
 class Graph
 {
     int V;
-    // maybe usar vector (mais eficiente neste caso acho eu)
     vector<int> *adj;
 
 public:
@@ -21,8 +18,9 @@ public:
     Graph getTranspose();
     vector<int> getSinks();
     vector<int> getSources();
-    int BFS(int s);
-    int getMaxChain();
+    void DFS(int s, int dp[], bool vis[]);
+    int BFS(int s, int dp[]);
+    int findLongestPath(int n);
 };
 
 Graph::Graph(int V)
@@ -36,9 +34,9 @@ Graph::~Graph()
     delete[] adj;
 }
 
-void Graph::addEdge(int v, int w)
+void Graph::addEdge(int v, int u)
 {
-    adj[v].push_back(w); // Add w to v’s list.
+    adj[v].push_back(u);
 }
 
 void Graph::printGraph()
@@ -86,7 +84,18 @@ vector<int> Graph::getSources()
     return gt.getSinks();
 }
 
-int Graph::BFS(int s)
+void Graph::DFS(int n, int dp[], bool vis[])
+{
+    vis[n] = true;
+    for (vector<int>::iterator i = this->adj[n].begin(); i != this->adj[n].end(); ++i)
+    {
+        if (!vis[*i])
+            this->DFS(*i, dp, vis);
+        dp[n] = max(dp[n], 1 + dp[*i]);
+    }
+}
+
+int Graph::BFS(int s, int dp[])
 {
     int visited_count = 0;
     bool *visited = new bool[V];
@@ -113,23 +122,37 @@ int Graph::BFS(int s)
                 visited_count++;
                 queue.push_back(*i);
             }
+            dp[s] = max(dp[s], 1 + dp[*i]);
         }
     }
 
     return visited_count;
 }
 
-int Graph::getMaxChain()
+int Graph::findLongestPath(int n)
 {
-    vector<int> sources = this->getSources();
-    int l = 0;
-    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
+    int dp[n];
+    memset(dp, 0, sizeof(int) * n);
+
+    bool vis[n];
+    memset(vis, false, sizeof(bool) * n);
+
+    for (int i = 0; i < n; i++)
     {
-        int chain_size = this->BFS(*i);
-        if (chain_size > l)
-            l = chain_size;
+        if (!vis[i])
+        {
+            this->BFS(i, dp);
+            // this->DFS(i, dp, vis);
+        }
     }
-    return l - 1;
+
+    int ans = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        ans = max(ans, dp[i]);
+    }
+    return ans;
 }
 
 int main(int argc, char const *argv[])
@@ -144,6 +167,6 @@ int main(int argc, char const *argv[])
         g.addEdge(u - 1, v - 1);
     }
 
-    std::cout << g.getSources().size() << " " << g.getMaxChain() << "\n";
+    std::cout << g.getSources().size() << " " << g.findLongestPath(n) + 1 << "\n";
     return 0;
 }
