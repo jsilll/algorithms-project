@@ -114,16 +114,6 @@ int Graph::findLongestPath(int n)
         }
     }
 
-    // eu acho que aqui só precisamos de ir as sources
-    // vector<int> sources = this->getSources();
-    // for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
-    // {
-    //     if (!vis[*i])
-    //     {
-    //         this->DFS(*i, dp, vis);
-    //     }
-    // }
-
     int ans = 0;
 
     for (int i = 0; i < n; i++)
