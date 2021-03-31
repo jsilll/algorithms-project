@@ -3,8 +3,8 @@
 #include <list>
 #include <stack>
 #include <vector>
+#include <queue>
 
-#define NINF INT_MIN
 using namespace std;
 
 class Graph
@@ -12,7 +12,7 @@ class Graph
     int V;
 
     vector<int> *adj;
-    void topologicalSort(int v, bool visited[], stack<int> &Stack);
+    vector<int> topologicalSort();
 
 public:
     Graph(int V);
@@ -22,7 +22,6 @@ public:
     Graph getTranspose();
     vector<int> getSinks();
     vector<int> getSources();
-
     int findLongestPath(int s);
 };
 
@@ -74,42 +73,78 @@ vector<int> Graph::getSources()
     return gt.getSinks();
 }
 
-void Graph::topologicalSort(int v, bool visited[], stack<int> &Stack) // DFS traversal and adding to the stack by closing order
+vector<int> Graph::topologicalSort()
 {
-    visited[v] = true;
+    // Create a vector to store indegrees of all
+    // vertices. Initialize all indegrees as 0.
+    vector<int> in_degree(V, 0);
 
-    for (vector<int>::iterator i = adj[v].begin(); i != adj[v].end(); ++i)
+    // Traverse adjacency lists to fill indegrees of
+    // vertices.  This step takes O(V+E) time
+    for (int u = 0; u < V; u++)
     {
-        if (!visited[*i])
-            topologicalSort(*i, visited, Stack);
+        vector<int>::iterator itr;
+        for (itr = adj[u].begin(); itr != adj[u].end(); itr++)
+            in_degree[*itr]++;
     }
 
-    Stack.push(v);
+    // Create a queue and enqueue all vertices with
+    // indegree 0
+    queue<int> q;
+    for (int i = 0; i < V; i++)
+        if (in_degree[i] == 0)
+            q.push(i);
+
+    // Initialize count of visited vertices
+    int cnt = 0;
+
+    // Create a vector to store result (A topological
+    // ordering of the vertices)
+    vector<int> top_order;
+
+    // One by one dequeue vertices from queue and enqueue
+    // adjacents if indegree of adjacent becomes 0
+    while (!q.empty())
+    {
+        // Extract front of queue (or perform dequeue)
+        // and add it to topological order
+        int u = q.front();
+        q.pop();
+        top_order.push_back(u);
+
+        // Iterate through all its neighbouring nodes
+        // of dequeued node u and decrease their in-degree
+        // by 1
+        vector<int>::iterator itr;
+        for (itr = adj[u].begin(); itr != adj[u].end(); itr++)
+
+            // If in-degree becomes zero, add it to queue
+            if (--in_degree[*itr] == 0)
+                q.push(*itr);
+
+        cnt++;
+    }
+
+    return top_order;
 }
 
 int Graph::findLongestPath(int s)
 {
-    stack<int> Stack;
+    vector<int> top_order;
     int dist[V];
 
-    bool *visited = new bool[V];
-    for (int i = 0; i < V; i++)
-        visited[i] = false;
+    top_order = this->topologicalSort();
 
     for (int i = 0; i < V; i++)
-        if (visited[i] == false)
-            topologicalSort(i, visited, Stack);
-
-    for (int i = 0; i < V; i++)
-        dist[i] = NINF;
+        dist[i] = INT_MIN;
     dist[s] = 0;
 
-    while (Stack.empty() == false)
+    while (top_order.empty() == false)
     {
-        int u = Stack.top();
-        Stack.pop();
+        int u = top_order.front();
+        top_order.erase(top_order.begin());
 
-        if (dist[u] != NINF)
+        if (dist[u] != INT_MIN)
         {
             for (vector<int>::iterator i = adj[u].begin(); i != adj[u].end(); ++i)
             {
@@ -117,8 +152,6 @@ int Graph::findLongestPath(int s)
             }
         }
     }
-
-    delete[] visited;
 
     int res = 0;
     for (int i = 0; i < V; i++)
@@ -148,8 +181,6 @@ int main()
         // tem de ser a partir das sources
         res = max(res, g.findLongestPath(*i)); // O ((V + E) * S)
     }
-
     std::cout << sources.size() << " " << res + 1 << "\n";
-
     return 0;
 }
