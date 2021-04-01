@@ -7,20 +7,19 @@ using namespace std;
 class Graph
 {
     int V;
-
     vector<int> *adj;
 
 public:
     Graph(int V);
     ~Graph();
 
-    void addEdge(int u, int v);
+    void addEdge(int v, int u);
     Graph getTranspose();
     vector<int> getAdjacent(int v);
     vector<int> getSinks();
     vector<int> getSources();
-    int findLongestPath(vector<int>);
-    queue<int> getTopologicalOrder();
+    int findLongestPath(vector<int> sources);
+    queue<int> getTopologicalOrder(vector<int> sources);
 };
 
 Graph::Graph(int V)
@@ -34,9 +33,9 @@ Graph::~Graph()
     delete[] adj;
 }
 
-void Graph::addEdge(int u, int v)
+void Graph::addEdge(int v, int u)
 {
-    adj[u].push_back(v);
+    adj[v].push_back(u);
 }
 
 Graph Graph::getTranspose()
@@ -72,44 +71,39 @@ vector<int> Graph::getSinks()
 
 vector<int> Graph::getSources()
 {
-    Graph gt = this->getTranspose(); // O(V + E)
+    Graph gt = this->getTranspose();
     return gt.getSinks();
 }
 
-queue<int> Graph::getTopologicalOrder()
+queue<int> Graph::getTopologicalOrder(vector<int> sources)
 {
-    vector<int> in_degree(V, 0);
-    queue<int> q;
-
-    for (int u = 0; u < V; u++)
-    {
-        vector<int>::iterator itr;
-        for (itr = adj[u].begin(); itr != adj[u].end(); itr++)
-        {
-            in_degree[*itr]++;
-        }
-    }
+    vector<int> in_edges(V, 0);
+    queue<int> q, topological_order;
 
     for (int i = 0; i < V; i++)
     {
-        if (in_degree[i] == 0)
+        for (vector<int>::iterator j = adj[i].begin(); j != adj[i].end(); j++)
         {
-            q.push(i);
+            in_edges[*j]++;
         }
     }
 
-    queue<int> topological_order;
+    for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
+    {
+        q.push(*i);
+    }
 
+    int v;
     while (!q.empty())
     {
-        int u = q.front();
+        v = q.front();
         q.pop();
 
-        topological_order.push(u);
+        topological_order.push(v);
 
-        for (vector<int>::iterator i = adj[u].begin(); i != adj[u].end(); i++)
+        for (vector<int>::iterator i = adj[v].begin(); i != adj[v].end(); i++)
         {
-            if (--in_degree[*i] == 0)
+            if (--in_edges[*i] == 0)
             {
                 q.push(*i);
             }
@@ -124,25 +118,23 @@ int Graph::findLongestPath(vector<int> sources)
 
     int res = 1;
     vector<int> dist = vector<int>(V, 0);
-    queue<int> topological_order = this->getTopologicalOrder();
+    queue<int> topological_order = this->getTopologicalOrder(sources);
 
     for (vector<int>::iterator i = sources.begin(); i != sources.end(); ++i)
     {
         dist[*i] = 1;
     }
 
+    int v;
     while (topological_order.empty() == false)
     {
-        int u = topological_order.front();
+        v = topological_order.front();
         topological_order.pop();
 
-        if (dist[u] != 0)
+        for (vector<int>::iterator i = adj[v].begin(); i != adj[v].end(); ++i)
         {
-            for (vector<int>::iterator i = adj[u].begin(); i != adj[u].end(); ++i)
-            {
-                dist[*i] = max(dist[*i], dist[u] + 1);
-                res = max(res, dist[*i]);
-            }
+            dist[*i] = max(dist[*i], dist[v] + 1);
+            res = max(res, dist[*i]);
         }
     }
 
@@ -151,12 +143,12 @@ int Graph::findLongestPath(vector<int> sources)
 
 int main()
 {
-    int n, m;
+    int n, m, u, v;
+
     scanf("%d %d", &n, &m);
 
     Graph g(n);
 
-    int u, v;
     for (int i = 0; i < m; i++)
     {
         scanf("%d %d", &u, &v);

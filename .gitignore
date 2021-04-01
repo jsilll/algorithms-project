@@ -40,3 +40,7 @@
 *.exe
 *.out
 *.app
+
+
+p1/inputs/
+p1/inputs/*
