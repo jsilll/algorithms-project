@@ -10,3 +10,6 @@ Considere adicionalmente o custo de comunicação cij entre dois processos pi e 
 Seja Px contido em P o conjunto de processos que correm no processador X, e Py contido em P o conjunto de processos que correm no processador Y, tal que Px interseção com Py seja igual a conjunto vazio, proponha e implemente um algoritmo eficiene que minimize o custo total de execução do programa P, sem testar todas as combinações de atribuições possíveis.
 
 min(sum(Xi) + sum(Yi) + sum(cij))
+
+## Links
+https://stackoverflow.com/questions/67039746/dynamic-programming-assigning-tasks-to-different-computers
