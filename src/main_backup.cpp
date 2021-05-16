@@ -1,4 +1,3 @@
-#include "weighted_graph.h"
 #include <iostream>
 #include <vector>
 
@@ -10,27 +9,26 @@ int main(int argc, char const *argv[])
 
     scanf("%d %d", &n, &k);
 
-    int V = n + 2;
-    W_Graph g(V);
+    vector<vector<int>> cpu_costs(2, vector<int>(n, 0));
+    vector<vector<int>> com_costs(n, vector<int>(n, 0));
 
-    // Process <-> Processor edges
+    // filling cpu processing costs matrix
     int cpu0_cost, cpu1_cost;
     for (int i = 0; i < n; i++)
     {
         scanf("%d %d", &cpu0_cost, &cpu1_cost);
-        g.addEdge(i, V - 2, cpu0_cost);
-        g.addEdge(i, V - 1, cpu1_cost);
+        cpu_costs[0][i] = cpu0_cost;
+        cpu_costs[1][i] = cpu1_cost;
     }
 
-    // Process <-> Process edges
+    // filling communications costs matrix
     int id1, id2, com_cost;
     for (int i = 0; i < k; i++)
     {
         scanf("%d %d %d", &id1, &id2, &com_cost);
-        g.addEdge(id1 - 1, id2 - 1, com_cost);
+        com_costs[id1 - 1][id2 - 1] = com_cost;
+        com_costs[id2 - 1][id1 - 1] = com_cost;
     }
-
-    g.kruskal();
 
     return 0;
 }
