@@ -17,7 +17,7 @@ class Graph
     vector<Edge_Class> *adj;
 
 public:
-    Graph(int V)
+    Graph<Edge_Class>(int V)
     {
         this->V = V;
         adj = new vector<Edge_Class>[V];
@@ -114,7 +114,7 @@ public:
 class F_Graph : public Graph<F_Edge>
 {
 public:
-    F_Graph(int V) : Graph(V)
+    F_Graph(int V) : Graph<F_Edge>(V)
     {
     }
 

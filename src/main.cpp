@@ -24,8 +24,10 @@ int main(int argc, char const *argv[])
         g.addEdge(v, u, c);
     }
 
-    g.edmondsKarp(0, n + 2 - 1);
     g.printGraph();
+
+    // g.edmondsKarp(0, n + 2 - 1);
+    // g.printGraph();
 
     return 0;
 }
