@@ -1,10 +1,20 @@
-#ifndef ARRAY_UTILS_H
-#define ARRAY_UTILS_H
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <iostream>
 #include <climits>
+#include <vector>
 
 using namespace std;
+
+void printVector(vector<int> vec)
+{
+    for (vector<int>::iterator itr = vec.begin(); itr != vec.end(); itr++)
+    {
+        cout << *itr << " ";
+    }
+    cout << endl;
+}
 
 void printArray(int *A, int size)
 {
@@ -22,27 +32,12 @@ void printArray(int *A, int size)
     cout << endl;
 }
 
-void fillMatrixDiag(int **M, int n, int m)
-{
-    for (int i = 0; i <= n; i++)
-    {
-        M[i][i] = m;
-    }
-}
-
 void printMatrix(int **M, int n, int m)
 {
     for (int i = 0; i <= n; i++)
     {
         printArray(M[i], m);
     }
-}
-
-void swap(int *arr, int i, int j)
-{
-    int aux = arr[i];
-    arr[i] = arr[j];
-    arr[j] = aux;
 }
 
 #endif
