@@ -5,255 +5,153 @@
 #include <climits>
 #include <vector>
 #include <queue>
-#include "edge.h"
-#include "utils.h"
 
 using namespace std;
 
-template <class Edge_Class>
 class Graph
 {
-    int V;
-    vector<Edge_Class> *adj;
+    int _v;                        // Number of vertices in graph
+    vector<vector<int>> _adj;      // Adjacency List
+    vector<vector<int>> _capacity; // Capacity Matrix
+    vector<vector<int>> _flow;     // Flow Matrix
 
 public:
-    Graph<Edge_Class>(int V)
-    {
-        this->V = V;
-        adj = new vector<Edge_Class>[V];
-    }
+    Graph(int _v);
+    ~Graph() {}
 
-    ~Graph()
-    {
-        delete[] adj;
-    }
+    // Getters
+    int getV();
+    vector<int> getAdjacent(int u);
 
-    // Basic Operations
-    int getV()
-    {
-        return V;
-    }
-
-    void addEdge(Edge_Class edge)
-    {
-        adj[edge.getU()].push_back(edge);
-    }
-
-    vector<Edge_Class> getAdjacent(int v)
-    {
-        return adj[v];
-    }
-};
-
-class W_Graph : public Graph<W_Edge>
-{
-public:
-    W_Graph(int V) : Graph<W_Edge>(V)
-    {
-    }
-
-    ~W_Graph()
-    {
-        Graph::~Graph();
-    }
-
-    // Basic Operations
-    void addEdge(int u, int v, int weight)
-    {
-        Graph::addEdge(W_Edge(u, v, weight));
-    }
-
-    void printGraph()
-    {
-        for (int u = 0; u < Graph::getV(); u++)
-        {
-            cout << u << " : ";
-            for (vector<W_Edge>::iterator itr = Graph::getAdjacent(u).begin(); itr != Graph::getAdjacent(u).end(); ++itr)
-            {
-                itr->printEdge();
-            }
-            cout << endl;
-        }
-    }
+    // Setters
+    void addEdge(int u, int v);
+    void setCapacity(int u, int v, int capacity);
 
     // Algorithms
-    void bfs(int s, int t, vector<int> *d, vector<int> *pi)
-    {
-        vector<bool> visited(Graph::getV(), false); // -1 white 0 grey 1 black
-        queue<int> q;                               // priority queue
+    int residualNetworkBFS(int s, int t, vector<int> &parent);
+    int edmondKarp(int s, int t);
 
-        visited[s] = true;
-        (*d)[s] = 0;
-        q.push(s);
-
-        while (!q.empty())
-        {
-            int u = q.front();
-            q.pop();
-
-            for (vector<W_Edge>::iterator itr = Graph::getAdjacent(u).begin(); itr != Graph::getAdjacent(u).end(); ++itr)
-            {
-                int v = itr->getV();
-                if (visited[v] == false)
-                {
-                    visited[v] = true;
-                    q.push(v);
-                    (*d)[v] = (*d)[u] + 1;
-                    (*pi)[v] = u;
-
-                    if (v == t)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-    }
+    // Print State
+    void printCapacityMatrix();
+    void printFlowMatrix();
 };
 
-class F_Graph : public Graph<F_Edge>
+Graph::Graph(int v)
 {
-public:
-    F_Graph(int V) : Graph<F_Edge>(V)
-    {
-    }
+    _v = v;
+    _adj = vector<vector<int>>(v, vector<int>(0));         // adjacency list
+    _capacity = vector<vector<int>>(v, vector<int>(v, 0)); // v x v matrix
+    _flow = vector<vector<int>>(v, vector<int>(v, 0));     // v x v matrix
+}
 
-    ~F_Graph()
-    {
-        Graph::~Graph();
-    }
+void Graph::addEdge(int u, int v)
+{
+    _adj[u].push_back(v);
+}
 
-    // Basic Operations
-    void addEdge(int u, int v, int capacity)
-    {
-        Graph::addEdge(F_Edge(u, v, capacity));
-    }
+void Graph::setCapacity(int u, int v, int capacity)
+{
+    _capacity[u][v] = capacity;
+}
 
-    void printGraph()
+int Graph::residualNetworkBFS(int s, int t, vector<int> &parent)
+{
+    fill(parent.begin(), parent.end(), -1);
+    parent[s] = -2;
+    queue<pair<int, int>> q;
+    q.push({s, INT_MAX});
+    while (!q.empty())
     {
-        for (int u = 0; u < Graph::getV(); u++)
+        int cur = q.front().first;
+        int flow = q.front().second;
+        q.pop();
+        for (int next : _adj[cur])
         {
-            cout << u << " : ";
-            for (vector<F_Edge>::iterator itr = Graph::getAdjacent(u).begin(); itr != Graph::getAdjacent(u).end(); ++itr)
+            if (parent[next] == -1)
             {
-                itr->printEdge();
+                // Forwards Edge Case
+                if (_capacity[cur][next] - _flow[cur][next])
+                {
+                    parent[next] = cur;
+                    int new_flow = min(flow, _capacity[cur][next] - _flow[cur][next]);
+                    if (next == t)
+                        return new_flow;
+                    q.push(make_pair(next, new_flow));
+                }
+                // Backwards Edge Case
+                if (_flow[next][cur])
+                {
+                    parent[next] = cur;
+                    int new_flow = min(flow, _flow[next][cur]);
+                    if (next == t)
+                        return new_flow;
+                    q.push(make_pair(next, new_flow));
+                }
             }
-            cout << endl;
         }
     }
+    return 0;
+}
 
-    // Algorithms
-    W_Graph buildResidualNetwork()
+int Graph::edmondKarp(int s, int t)
+{
+    int flow = 0;
+    int new_flow = 0;
+    vector<int> parent(_v, -1);
+    int cur = t;
+    while ((new_flow = residualNetworkBFS(s, t, parent)))
     {
-        W_Graph gf(Graph::getV()); // Construir a rede residual
-
-        for (int u = 0; u < Graph::getV(); u++)
+        flow += new_flow;
+        while (cur != s)
         {
-            for (vector<F_Edge>::iterator itr = Graph::getAdjacent(u).begin(); itr != Graph::getAdjacent(u).end(); ++itr)
+            int prev = parent[cur];
+
+            //  Check for back-edge reduction first
+            if (_flow[cur][prev] >= new_flow)
             {
-                int v = itr->getV();
-                int f = itr->getFlow();
-                int rc = itr->getResidualCapacity();
-                if (rc)
-                {
-                    gf.addEdge(u, v, rc);
-                }
-                if (f)
-                {
-                    gf.addEdge(v, u, f);
-                }
+                _flow[cur][prev] -= new_flow;
             }
+            else
+            {
+                _flow[prev][cur] += new_flow;
+            }
+
+            cur = prev;
         }
-
-        return gf;
+        cur = t;
     }
+    // Print Parents Vector, corresponds to minimum cut on residual network
+    // cout << "Minimum Cut" << endl;
+    // for (int p : parent)
+    // {
+    //     cout << p << " ";
+    // }
+    // cout << endl;
+    return flow;
+}
 
-    int edmondsKarp(int s, int t)
+void Graph::printCapacityMatrix()
+{
+    for (int u = 0; u < _v; u++)
     {
-        int total_flow = 0;
-        W_Graph gf = this->buildResidualNetwork();
-
-        vector<int> d(Graph::getV(), -1);
-        vector<int> pi(Graph::getV(), -1);
-
-        gf.bfs(s, t, &d, &pi);
-        while (d[Graph::getV() - 1] != -1) // means we reached the sink
+        for (int v = 0; v < _v; v++)
         {
-            int max_flow = INT_MAX; // max posible flow to increase after bfs call
-            int v = t;
-            int u = pi[v];
-            vector<F_Edge *> forward_edges;
-            vector<F_Edge *> backwards_edges;
-            bool found_edge = false;
-
-            cout << "Found Increase Path:" << endl;
-            while (u != -1) // Percorrer o caminho do sink para a source
-            {
-                found_edge = false;
-
-                // Forward Edge
-                for (std::size_t i = 0; i < Graph::getAdjacent(u).size(); i++)
-                {
-                    if (Graph::getAdjacent(u)[i].getV() == v)
-                    {
-                        max_flow = min(max_flow, Graph::getAdjacent(u)[i].getResidualCapacity());
-                        forward_edges.push_back(&Graph::getAdjacent(u)[i]);
-                        cout << "(" << Graph::getAdjacent(u)[i].getU() << ", " << Graph::getAdjacent(u)[i].getV() << ")";
-                        found_edge = true;
-                        break;
-                    }
-                }
-
-                if (!found_edge)
-                {
-                    // Backwards Edge
-                    for (std::size_t i = 0; i < Graph::getAdjacent(v).size(); i++)
-                    {
-                        if (Graph::getAdjacent(v)[i].getV() == u)
-                        {
-                            max_flow = min(max_flow, Graph::getAdjacent(v)[i].getFlow());
-                            backwards_edges.push_back(&Graph::getAdjacent(v)[i]);
-                            cout << "(" << Graph::getAdjacent(u)[i].getU() << ", " << Graph::getAdjacent(u)[i].getV() << ")";
-                            break;
-                        }
-                    }
-                }
-                v = u;
-                u = pi[v];
-            }
-            cout << endl;
-
-            total_flow += max_flow;
-
-            // Increase flow in forward edges
-            for (std::size_t i = 0; i < forward_edges.size(); i++)
-            {
-                forward_edges[i]->setFlow(forward_edges[i]->getFlow() + max_flow);
-            }
-
-            // Decrease flow in backwards edges
-            for (std::size_t i = 0; i < backwards_edges.size(); i++)
-            {
-                backwards_edges[i]->setFlow(backwards_edges[i]->getFlow() - max_flow);
-            }
-
-            // Resetting the vectors
-            for (int i = 0; i < Graph::getV(); i++)
-            {
-                d[i] = -1;
-                pi[i] = -1;
-            }
-
-            W_Graph gf = this->buildResidualNetwork();
-            gf.bfs(s, t, &d, &pi);
+            cout << _capacity[u][v] << " ";
         }
-
-        cout << "Fluxo Máximo: " << total_flow << endl;
-        cout << "Corte Minimo:" << endl;
-        printVector(d);
-
-        return total_flow;
+        cout << endl;
     }
-};
+}
+
+void Graph::printFlowMatrix()
+{
+    for (int u = 0; u < _v; u++)
+    {
+        for (int v = 0; v < _v; v++)
+        {
+            cout << _flow[u][v] << " ";
+        }
+        cout << endl;
+    }
+}
 
 #endif
