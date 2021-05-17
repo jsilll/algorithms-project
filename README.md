@@ -12,4 +12,4 @@ Seja Px contido em P o conjunto de processos que correm no processador X, e Py c
 min(sum(Xi) + sum(Yi) + sum(cij))
 
 ## Links
-https://stackoverflow.com/questions/67039746/dynamic-programming-assigning-tasks-to-different-computers
+https://cp-algorithms.com/graph/edmonds_karp.html
