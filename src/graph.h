@@ -57,35 +57,43 @@ void Graph::setCapacity(int u, int v, int capacity)
 int Graph::residualNetworkBFS(int s, int t, vector<int> &parent)
 {
     fill(parent.begin(), parent.end(), -1);
-    parent[s] = -2;
+    parent[s] = 0; // Source is it's own parent
+
     queue<pair<int, int>> q;
-    q.push({s, INT_MAX});
+    q.push(make_pair(s, INT_MAX));
+
     while (!q.empty())
     {
-        int cur = q.front().first;
+        int u = q.front().first;
         int flow = q.front().second;
         q.pop();
-        for (int next : _adj[cur])
+
+        for (int v : _adj[u])
         {
-            if (parent[next] == -1)
+            if (parent[v] == -1) // If it hasn't been visited before
             {
-                // Forwards Edge Case
-                if (_capacity[cur][next] - _flow[cur][next])
+                // Forwards Edge Case, must have residual capacity
+                if (_capacity[u][v] - _flow[u][v])
                 {
-                    parent[next] = cur;
-                    int new_flow = min(flow, _capacity[cur][next] - _flow[cur][next]);
-                    if (next == t)
+                    int new_flow = min(flow, _capacity[u][v] - _flow[u][v]);
+                    parent[v] = u;
+                    if (v == t)
+                    {
                         return new_flow;
-                    q.push(make_pair(next, new_flow));
+                    }
+                    q.push(make_pair(v, new_flow));
                 }
-                // Backwards Edge Case
-                if (_flow[next][cur])
+
+                // Backwards Edge Case, must have flow
+                else if (_flow[v][u])
                 {
-                    parent[next] = cur;
-                    int new_flow = min(flow, _flow[next][cur]);
-                    if (next == t)
+                    int new_flow = min(flow, _flow[v][u]);
+                    parent[v] = u;
+                    if (v == t)
+                    {
                         return new_flow;
-                    q.push(make_pair(next, new_flow));
+                    }
+                    q.push(make_pair(v, new_flow));
                 }
             }
         }
@@ -97,36 +105,26 @@ int Graph::edmondKarp(int s, int t)
 {
     int flow = 0;
     int new_flow = 0;
+    int u = t;
     vector<int> parent(_v, -1);
-    int cur = t;
     while ((new_flow = residualNetworkBFS(s, t, parent)))
     {
         flow += new_flow;
-        while (cur != s)
+        while (u != s)
         {
-            int prev = parent[cur];
-
             //  Check for back-edge reduction first
-            if (_flow[cur][prev] >= new_flow)
+            if (_flow[u][parent[u]])
             {
-                _flow[cur][prev] -= new_flow;
+                _flow[u][parent[u]] -= new_flow;
             }
-            else
+            else // Must be a forwards edge then
             {
-                _flow[prev][cur] += new_flow;
+                _flow[parent[u]][u] += new_flow;
             }
-
-            cur = prev;
+            u = parent[u];
         }
-        cur = t;
+        u = t;
     }
-    // Print Parents Vector, corresponds to minimum cut on residual network
-    // cout << "Minimum Cut" << endl;
-    // for (int p : parent)
-    // {
-    //     cout << p << " ";
-    // }
-    // cout << endl;
     return flow;
 }
 
