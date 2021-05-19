@@ -24,8 +24,8 @@ vector<int> _X, _Y;
 void printUsage()
 {
 	cout << "Usage: gen2procs #N #C seed" << endl;
-	cout << "\t#N: number of processes (N >= 2)" << endl;
-	cout << "\t#C: max cost of any process execution (C>0)" << endl;
+	cout << "\t#N: number of processes (N >= 2)" << endl;			 // N = V - 2
+	cout << "\t#C: max cost of any process execution (C>0)" << endl; // |f| = C * N
 	cout << "\tseed: random seed number (optional)" << endl;
 	exit(0);
 }

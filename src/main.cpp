@@ -32,6 +32,6 @@ int main(int argc, char const *argv[])
         g.addEdge(v, u);
     }
 
-    std::cout << g.edmondKarp(0, n + 1) << endl;
+    std::cout << g.edmondsKarp(0, n + 1) << endl;
     return 0;
 }
