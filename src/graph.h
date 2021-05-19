@@ -54,7 +54,7 @@ void Graph::setCapacity(int u, int v, int capacity)
     _capacity[u][v] = capacity;
 }
 
-int Graph::residualNetworkBFS(int s, int t, vector<int> &parent)
+int Graph::residualNetworkBFS(int s, int t, vector<int> &parent) // O(V + E)
 {
     fill(parent.begin(), parent.end(), -1);
     parent[s] = 0; // Source is it's own parent
@@ -72,10 +72,10 @@ int Graph::residualNetworkBFS(int s, int t, vector<int> &parent)
         {
             if (parent[v] == -1) // If it hasn't been visited before
             {
-                // Forwards Edge Case, must have residual capacity
-                if (_capacity[u][v] - _flow[u][v])
+                // Forwards Edge Case, must have capacity
+                if (_capacity[u][v])
                 {
-                    int new_flow = min(flow, _capacity[u][v] - _flow[u][v]);
+                    int new_flow = min(flow, _capacity[u][v]);
                     parent[v] = u;
                     if (v == t)
                     {
@@ -105,25 +105,24 @@ int Graph::edmondKarp(int s, int t)
 {
     int flow = 0;
     int new_flow = 0;
-    int u = t;
     vector<int> parent(_v, -1);
-    while ((new_flow = residualNetworkBFS(s, t, parent)))
+    while ((new_flow = residualNetworkBFS(s, t, parent))) // O((V + E + E) x f*)
     {
         flow += new_flow;
-        while (u != s)
+        for (int u = t; u != s; u = parent[u])
         {
             //  Check for back-edge reduction first
             if (_flow[u][parent[u]])
             {
                 _flow[u][parent[u]] -= new_flow;
+                _capacity[u][parent[u]] += new_flow;
             }
             else // Must be a forwards edge then
             {
                 _flow[parent[u]][u] += new_flow;
+                _capacity[parent[u]][u] -= new_flow;
             }
-            u = parent[u];
         }
-        u = t;
     }
     return flow;
 }

@@ -13,3 +13,10 @@ min(sum(Xi) + sum(Yi) + sum(cij))
 
 ## Links
 https://cp-algorithms.com/graph/edmonds_karp.html
+
+## Complexidades
+- Ford-Fulkerson O(E |f*|)
+- Edmonds-Karp O(VE^2)
+
+## Numero de Arestas
+- 2 * Numero de Processos + 2 * Numero de Custos de comunicação diferentes de 0
