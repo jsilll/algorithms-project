@@ -33,5 +33,6 @@ int main(int argc, char const *argv[])
     }
 
     std::cout << g.edmondsKarp(0, n + 1) << endl;
+
     return 0;
 }

@@ -13,7 +13,6 @@ class Graph
     int _v;                        // Number of vertices in graph
     vector<vector<int>> _adj;      // Adjacency List
     vector<vector<int>> _capacity; // Capacity Matrix
-    vector<vector<int>> _flow;     // Flow Matrix
 public:
     Graph(int _v);
     ~Graph() {}
@@ -36,7 +35,6 @@ Graph::Graph(int v)
     _v = v;
     _adj = vector<vector<int>>(v, vector<int>(0));         // adjacency list
     _capacity = vector<vector<int>>(v, vector<int>(v, 0)); // v x v matrix
-    _flow = vector<vector<int>>(v, vector<int>(v, 0));     // v x v matrix
 }
 
 void Graph::addEdge(int u, int v)
@@ -62,30 +60,15 @@ int Graph::residualNetworkBFS(int s, int t, vector<int> &parent) // O(V + E)
         q.pop();
         for (int v : _adj[u])
         {
-            if (parent[v] == -1) // If it hasn't been visited before
+            if (parent[v] == -1 && _capacity[u][v])
             {
-                // Forwards Edge Case, must have capacity
-                if (_capacity[u][v] - _flow[u][v])
+                int new_flow = min(flow, _capacity[u][v]);
+                parent[v] = u;
+                if (v == t)
                 {
-                    int new_flow = min(flow, _capacity[u][v] - _flow[u][v]);
-                    parent[v] = u;
-                    if (v == t)
-                    {
-                        return new_flow;
-                    }
-                    q.push(make_pair(v, new_flow));
+                    return new_flow;
                 }
-                // Backwards Edge Case, must have flow
-                else if (_flow[v][u]) // u -> v
-                {
-                    int new_flow = min(flow, _flow[v][u]);
-                    parent[v] = u;
-                    if (v == t)
-                    {
-                        return new_flow;
-                    }
-                    q.push(make_pair(v, new_flow));
-                }
+                q.push(make_pair(v, new_flow));
             }
         }
     }
@@ -102,15 +85,8 @@ int Graph::edmondsKarp(int s, int t)
         flow += new_flow;
         for (int u = t; u != s; u = parent[u])
         {
-            //  Check for back-edge reduction
-            if (_flow[u][parent[u]]) // parent[u] -> u
-            {
-                _flow[u][parent[u]] -= new_flow;
-            }
-            else // Must be a forwards edge then
-            {
-                _flow[parent[u]][u] += new_flow;
-            }
+            _capacity[parent[u]][u] -= new_flow;
+            _capacity[u][parent[u]] += new_flow;
         }
     }
     return flow;
@@ -123,18 +99,6 @@ void Graph::printCapacityMatrix()
         for (int v = 0; v < _v; v++)
         {
             cout << _capacity[u][v] << " ";
-        }
-        cout << endl;
-    }
-}
-
-void Graph::printFlowMatrix()
-{
-    for (int u = 0; u < _v; u++)
-    {
-        for (int v = 0; v < _v; v++)
-        {
-            cout << _flow[u][v] << " ";
         }
         cout << endl;
     }

@@ -1,9 +1,9 @@
 rm -rf times.txt
 touch times.txt
 
-for filename in inputs/*; do 
-    echo "${filename}"
-    (time ./main.out < "${filename}" > /dev/null) &>> times.txt; 
+for filename in inputs/tests/*; do 
+    echo "${filename}" >> times.txt
+    (time ./main.out < "${filename}" >> times.txt) # &>> times.txt; 
 done
 
 # echo "\n" >> times.txt
